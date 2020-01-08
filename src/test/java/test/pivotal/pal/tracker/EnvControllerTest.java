@@ -1,11 +1,12 @@
 package test.pivotal.pal.tracker;
 
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Map;
-import io.pivotal.pal.tracker.EnvController;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
+
+import io.pivotal.pal.tracker.EnvController;
 
 public class EnvControllerTest {
     @Test
@@ -19,7 +20,7 @@ public class EnvControllerTest {
 
         Map<String, String> env = controller.getEnv();
 
-        assertThat(env.get("PORT")).isEqualTo("8675");
+        assertThat(env.get("PORTS")).isEqualTo("8675");
         assertThat(env.get("MEMORY_LIMIT")).isEqualTo("12G");
         assertThat(env.get("CF_INSTANCE_INDEX")).isEqualTo("34");
         assertThat(env.get("CF_INSTANCE_ADDR")).isEqualTo("123.sesame.street");
