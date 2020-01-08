@@ -1,13 +1,9 @@
---- 
-applications: 
-  - 
-    env: 
-      CF_INSTANCE_ADDR: "dok"
-      CF_INSTANCE_INDEX: "ok"
-      JBP_CONFIG_OPEN_JDK_JRE: "{ jre: { version: 11.+ } }"
-      MEMORY_LIMIT: "200"
-      PORTS: "8080"
-      WELCOME_MESSAGE: "Hello from Cloud Foundry"
-    name: pal-tracker
-    path: build/libs/pal-tracker.jar
-    random-route: true
+---
+applications:
+- name: pal-tracker
+  path: build/libs/pal-tracker.jar
+  routes:
+  - route: pal-tracker-p-chintalapati.cfapps.io
+  env:
+    WELCOME_MESSAGE: Hello from the review environment
+    JBP_CONFIG_OPEN_JDK_JRE: '{ jre: { version: 11.+ } }'
