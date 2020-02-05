@@ -1,7 +1,6 @@
 package test.pivotal.pal.tracker;
 
 
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.sql.Date;
@@ -162,5 +161,3 @@ public class JdbcTimeEntryRepositoryTest {
         assertThat(foundEntry.get("count")).isEqualTo(1L);
     }
 }
-
-

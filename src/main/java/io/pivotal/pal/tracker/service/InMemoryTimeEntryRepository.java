@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import io.pivotal.pal.tracker.api.TimeEntryRepository;
 import io.pivotal.pal.tracker.bo.TimeEntry;
 
-@Component
+//@Component
 //public class InMemoryTimeEntryRepository  implements TimeEntryRepository{
 	public class InMemoryTimeEntryRepository  {
 
