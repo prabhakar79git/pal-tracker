@@ -1,8 +1,12 @@
 package test.pivotal.pal.trackerapi;
 
-import com.jayway.jsonpath.DocumentContext;
-import io.pivotal.pal.tracker.PalTrackerApplication;
-import io.pivotal.pal.tracker.TimeEntry;
+import static com.jayway.jsonpath.JsonPath.parse;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+
+import java.time.LocalDate;
+import java.util.Collection;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,12 +16,10 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.time.LocalDate;
-import java.util.Collection;
+import com.jayway.jsonpath.DocumentContext;
 
-import static com.jayway.jsonpath.JsonPath.parse;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import io.pivotal.pal.tracker.PalTrackerApplication;
+import io.pivotal.pal.tracker.bo.TimeEntry;
 
 @SpringBootTest(classes = PalTrackerApplication.class, webEnvironment = RANDOM_PORT)
 public class TimeEntryApiTest {
@@ -67,10 +69,14 @@ public class TimeEntryApiTest {
     public void testRead() throws Exception {
         Long id = createTimeEntry();
 
+        System.out.println( " in testREad method Log id is "+id);
+        
 
-        ResponseEntity<String> readResponse = this.restTemplate.getForEntity("/time-entries/" + id, String.class);
+        ResponseEntity<String> readResponse = this.restTemplate.exchange("/time-entries/" + id,HttpMethod.GET,null, String.class);
+        
+        System.out.println( this.restTemplate.getRootUri() );
 
-
+        System.out.println(" Sttus Code in read is  " + readResponse.getStatusCode());
         assertThat(readResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         DocumentContext readJson = parse(readResponse.getBody());
         assertThat(readJson.read("$.id", Long.class)).isEqualTo(id);
@@ -87,9 +93,10 @@ public class TimeEntryApiTest {
         long userId = 3L;
         TimeEntry updatedTimeEntry = new TimeEntry(projectId, userId, LocalDate.parse("2017-01-09"), 9);
 
-
+        System.out.println( " in testUpdate method Log id is "+id);
         ResponseEntity<String> updateResponse = restTemplate.exchange("/time-entries/" + id, HttpMethod.PUT, new HttpEntity<>(updatedTimeEntry, null), String.class);
 
+        System.out.println(" Sttus Code in Update " + updateResponse.getStatusCode());
 
         assertThat(updateResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 

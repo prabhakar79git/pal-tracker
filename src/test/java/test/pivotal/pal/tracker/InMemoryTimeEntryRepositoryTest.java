@@ -1,23 +1,30 @@
 package test.pivotal.pal.tracker;
 
-import io.pivotal.pal.tracker.InMemoryTimeEntryRepository;
-import io.pivotal.pal.tracker.TimeEntry;
-import org.junit.jupiter.api.Test;
+import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDate;
 import java.util.List;
 
-import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
+
+import io.pivotal.pal.tracker.bo.TimeEntry;
+import io.pivotal.pal.tracker.service.InMemoryTimeEntryRepository;
 
 public class InMemoryTimeEntryRepositoryTest {
     @Test
     public void create() throws Exception {
         InMemoryTimeEntryRepository repo = new InMemoryTimeEntryRepository();
+        
+        InMemoryTimeEntryRepository.setIdToDefault();
 
         long projectId = 123L;
         long userId = 456L;
         TimeEntry createdTimeEntry = repo.create(new TimeEntry(projectId, userId, LocalDate.parse("2017-01-08"), 8));
+        
+        System.out.println(createdTimeEntry.getTimeEntryId()+" "+  createdTimeEntry.getProjectId()
+        
+        		+" "+ createdTimeEntry.getUserId()+ "  "+createdTimeEntry.getDate() +" "+createdTimeEntry.getHours());
 
         long timeEntryId = 1L;
         TimeEntry expected = new TimeEntry(timeEntryId, projectId, userId, LocalDate.parse("2017-01-08"), 8);
@@ -30,7 +37,7 @@ public class InMemoryTimeEntryRepositoryTest {
     @Test
     public void find() throws Exception {
         InMemoryTimeEntryRepository repo = new InMemoryTimeEntryRepository();
-
+        InMemoryTimeEntryRepository.setIdToDefault();
         long projectId = 123L;
         long userId = 456L;
         repo.create(new TimeEntry(projectId, userId, LocalDate.parse("2017-01-08"), 8));
@@ -54,6 +61,7 @@ public class InMemoryTimeEntryRepositoryTest {
     @Test
     public void list() throws Exception {
         InMemoryTimeEntryRepository repo = new InMemoryTimeEntryRepository();
+        InMemoryTimeEntryRepository.setIdToDefault();
         repo.create(new TimeEntry(123L, 456L, LocalDate.parse("2017-01-08"), 8));
         repo.create(new TimeEntry(789L, 654L, LocalDate.parse("2017-01-07"), 4));
 
@@ -104,6 +112,7 @@ public class InMemoryTimeEntryRepositoryTest {
     @Test
     public void deleteKeepsTrackOfLatestIdProperly() {
         InMemoryTimeEntryRepository repo = new InMemoryTimeEntryRepository();
+        InMemoryTimeEntryRepository.setIdToDefault();
 
         long projectId = 123L;
         long userId = 456L;
