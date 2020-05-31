@@ -1,7 +1,10 @@
 package io.pivotal.pal.tracker.controler;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,13 +22,26 @@ import io.pivotal.pal.tracker.service.JdbcTimeEntryRepository;
 @RestController
 public class TimeEntryController {
     
-	
 	TimeEntryRepository repository;
 
     public TimeEntryController(TimeEntryRepository timeEntryRepository){
         this.repository=timeEntryRepository;}
 
-
+    @GetMapping("/")
+    public String sayHello(@Value("${welcome.message}")String message ) {
+        return message;
+    }
+    @GetMapping("/env")
+    public Map<String, String> getEnv() {
+    	
+    	Map<String, String> map = new HashMap<String, String>();
+    	map.put("PORTS", "20");
+    	map.put("MEMORY_LIMIT","30");
+    	map.put("CF_INSTANCE_INDEX", "40");
+    	map.put("CF_INSTANCE_ADDR", "50");
+    	
+        return map;
+    }
 
 	@PostMapping(value = "/time-entries")
 	public ResponseEntity<TimeEntry> create(@RequestBody TimeEntry entry) {
