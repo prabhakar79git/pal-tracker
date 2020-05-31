@@ -2,8 +2,6 @@ package io.pivotal.pal.tracker.controler;
 
 import java.util.List;
 
-import javax.websocket.server.PathParam;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,15 +15,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.pivotal.pal.tracker.bo.TimeEntry;
 import io.pivotal.pal.tracker.service.InMemoryTimeEntryRepository;
+import io.pivotal.pal.tracker.service.JdbcTimeEntryRepository;
 
 @RestController
 public class TimeEntryController {
-
-	private InMemoryTimeEntryRepository repository;
+    @Autowired
+	private JdbcTimeEntryRepository repository;
+	
+	private InMemoryTimeEntryRepository repo;
 
 	@Autowired
 	public TimeEntryController(InMemoryTimeEntryRepository repository) {
-		this.repository = repository;
+		this.repo = repository;
 	}
 
 
@@ -77,12 +78,6 @@ public class TimeEntryController {
 
 	@DeleteMapping(value = "/time-entries/{id}" )
 	public ResponseEntity delete(@PathVariable("id") Long id) {
-		
-		System.out.println("param id is ");
-
-		if( this.repository.delete(id)) {
-			return ResponseEntity.status(HttpStatus.OK).body(null);
-		}
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		return ResponseEntity.status(HttpStatus.OK).body(null);
 	}
 	}

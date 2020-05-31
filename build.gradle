@@ -1,6 +1,16 @@
+
+import org.flywaydb.gradle.task.FlywayMigrateTask
+
+buildscript {
+   dependencies {
+       classpath 'mysql:mysql-connector-java:8.0.13'
+   }
+}
+
 plugins{
 	id 'org.springframework.boot' version '2.2.2.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+	id "org.flywaydb.flyway" version "5.2.1"
 	id 'java'
 }
 
@@ -8,9 +18,13 @@ repositories {
 	mavenCentral()
 }
 
+
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	implementation 'mysql:mysql-connector-java'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
 }
@@ -26,6 +40,7 @@ bootRun.environment([
 	"MEMORY_LIMIT": "200",
 	"CF_INSTANCE_INDEX" : "ok",
 	"CF_INSTANCE_ADDR" : "dok",
+	"SPRING_DATASOURCE_URL": "jdbc:mysql://localhost:3306/tracker_dev?user=tracker&useSSL=false&useTimezone=true&serverTimezone=UTC&useLegacyDatetimeCode=false"
     
 ])
 
@@ -35,5 +50,17 @@ test.environment([
 	"MEMORY_LIMIT": "200",
 	"CF_INSTANCE_INDEX" : "ok",
 	"CF_INSTANCE_ADDR" : "dok",
+	"SPRING_DATASOURCE_URL": "jdbc:mysql://localhost:3306/tracker_test?user=tracker&useSSL=false&useTimezone=true&serverTimezone=UTC&useLegacyDatetimeCode=false",
 ])
+
+flyway {
+    url = "jdbc:mysql://localhost:3306/tracker_dev"
+    user = "tracker"
+    password = ""
+    locations = ["filesystem:databases/tracker/migrations"]
+}
+
+task testMigrate(type: FlywayMigrateTask) {
+    url = "jdbc:mysql://localhost:3306/tracker_test?user=tracker&useSSL=false&useTimezone=true&serverTimezone=UTC&useLegacyDatetimeCode=false"
+}
 
