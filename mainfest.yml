@@ -6,12 +6,6 @@ applications:
   - route: pal-tracker-p-chintalapati.cfapps.io
   env:
     WELCOME_MESSAGE: Hello from the review environment
-    PORTS : 8080
-    MEMORY_LIMIT: 200
-    CF_INSTANCE_INDEX : ok
-    CF_INSTANCE_ADDR : dok
-      
-    
     JBP_CONFIG_OPEN_JDK_JRE: '{ jre: { version: 11.+ } }'
   services:
   - tracker-database

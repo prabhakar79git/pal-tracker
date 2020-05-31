@@ -2,7 +2,6 @@ package io.pivotal.pal.tracker.controler;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,21 +12,19 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.pivotal.pal.tracker.api.TimeEntryRepository;
 import io.pivotal.pal.tracker.bo.TimeEntry;
-import io.pivotal.pal.tracker.service.InMemoryTimeEntryRepository;
 import io.pivotal.pal.tracker.service.JdbcTimeEntryRepository;
 
 @RestController
 public class TimeEntryController {
-    @Autowired
-	private JdbcTimeEntryRepository repository;
+    
 	
-	private InMemoryTimeEntryRepository repo;
+	TimeEntryRepository repository;
 
-	@Autowired
-	public TimeEntryController(InMemoryTimeEntryRepository repository) {
-		this.repo = repository;
-	}
+    public TimeEntryController(TimeEntryRepository timeEntryRepository){
+        this.repository=timeEntryRepository;}
+
 
 
 	@PostMapping(value = "/time-entries")
