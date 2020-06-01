@@ -6,6 +6,8 @@ applications:
       - route: pal-tracker-p-chintalapati.cfapps.io
     env:
       WELCOME_MESSAGE: Hello from Cloud Foundry
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "*"
+      MANAGEMENT_ENDPOINT_HEALTH_SHOWDETAILS: always
       JBP_CONFIG_OPEN_JDK_JRE: '{ jre: { version: 11.+ } }'
     services:
       - tracker-database

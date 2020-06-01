@@ -15,17 +15,27 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.DistributionSummary;
+import io.micrometer.core.instrument.MeterRegistry;
 import io.pivotal.pal.tracker.api.TimeEntryRepository;
 import io.pivotal.pal.tracker.bo.TimeEntry;
-import io.pivotal.pal.tracker.service.JdbcTimeEntryRepository;
 
 @RestController
 public class TimeEntryController {
     
-	TimeEntryRepository repository;
-
-    public TimeEntryController(TimeEntryRepository timeEntryRepository){
-        this.repository=timeEntryRepository;}
+	private TimeEntryRepository repository;
+    private final DistributionSummary timeEntrySummary;
+    private final Counter actionCounter;
+    
+    public TimeEntryController(
+            TimeEntryRepository timeEntriesRepo,
+            MeterRegistry meterRegistry
+    ) {
+        this.repository = timeEntriesRepo;
+        timeEntrySummary = meterRegistry.summary("timeEntry.summary");
+        actionCounter = meterRegistry.counter("timeEntry.actionCounter");
+    }
 
     @GetMapping("/")
     public String sayHello(@Value("${welcome.message}")String message ) {
@@ -46,12 +56,15 @@ public class TimeEntryController {
 	@PostMapping(value = "/time-entries")
 	public ResponseEntity<TimeEntry> create(@RequestBody TimeEntry entry) {
 
-		return ResponseEntity.status(HttpStatus.CREATED).body(this.repository.create(entry));
+		TimeEntry enttry = this.repository.create(entry);
+		actionCounter.increment();
+		 timeEntrySummary.record(repository.list().size());
+		return ResponseEntity.status(HttpStatus.CREATED).body(enttry);
 	}
 
 	@GetMapping(value = "/time-entries")
 	public ResponseEntity<List<TimeEntry>> list() {
-
+		actionCounter.increment();
 		return ResponseEntity.status(HttpStatus.OK).body(this.repository.list());
 	}
 
@@ -68,7 +81,7 @@ public class TimeEntryController {
 */
 		
 		if(entry!=null) {
-			
+			actionCounter.increment();
 			return ResponseEntity.status(HttpStatus.OK).body(entry); 
 		}
 		
@@ -84,6 +97,7 @@ public class TimeEntryController {
 		TimeEntry  timeEntry = this.repository.update(id, entry);
 		
 		if(timeEntry !=null) {
+			  actionCounter.increment();
 			return ResponseEntity.status(HttpStatus.OK).body(timeEntry);
 		}
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -93,6 +107,8 @@ public class TimeEntryController {
 	public ResponseEntity delete(@PathVariable("id") Long id) {
 		
 		this.repository.delete(id);
+		 actionCounter.increment();
+	        timeEntrySummary.record(repository.list().size());
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 	}
 	}
